@@ -69,10 +69,6 @@ jobs:
               printf '%s ago\n' "$(convert_second "(( now - secs ))" 'verbose')"
           }
 
-      - name: Parsing repos info
-        shell: bash
-        run: |
-          source gb
           for ((index=0; index<$public_repos; index++)); {
               forked="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.fork)")"
               if [ "$forked" == 'false' ]; then
