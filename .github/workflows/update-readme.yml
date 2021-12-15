@@ -51,7 +51,7 @@ jobs:
           duration="${duration// /%20}"
           {
               printf "<div align=\"center\">\n"
-              printf "<img alt=\"membership-message\" src=\"https://img.shields.io/badge/A%%20member%%20for%%20${duration}-grey\"> "  ## NOTE JUMP_1 exceptionally used %% here
+              # printf "<img alt=\"membership-message\" src=\"https://img.shields.io/badge/A%%20member%%20for%%20${duration}-grey\"> "  ## NOTE JUMP_1 exceptionally used %% here
               printf "<a href=\"https://github.com/davoudarsalani/davoudarsalani/actions/workflows/update-readme.yml\"><img alt=\"update-readme\" src=\"https://github.com/davoudarsalani/davoudarsalani/actions/workflows/update-readme.yml/badge.svg\"></a>\n"
               printf "</div>\n"
           } >> README.md
