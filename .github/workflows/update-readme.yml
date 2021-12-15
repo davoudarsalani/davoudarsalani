@@ -55,9 +55,7 @@ jobs:
               printf "<a href=\"https://github.com/davoudarsalani/davoudarsalani/actions/workflows/update-readme.yml\"><img alt=\"update-readme\" src=\"https://github.com/davoudarsalani/davoudarsalani/actions/workflows/update-readme.yml/badge.svg\"></a>\n"
               printf "</div>\n"
           } >> README.md
-          printf '%s\n' 'vvvvv'
           cat README.md
-          printf '%s\n' '^^^^'
 
       - name: Getting repos info
         shell: bash
