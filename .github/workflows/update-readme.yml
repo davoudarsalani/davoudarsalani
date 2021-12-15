@@ -1,0 +1,73 @@
+name: Update README
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/10 * * * *'  ## every 10 minutes
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Getting user info
+        shell: bash
+        run: |
+          user_info="$(curl -s https://api.github.com/users/davoudarsalani)"
+          wget https://raw.githubusercontent.com/davoudarsalani/scripts/master/gb
+
+          ## save a multi-line variable into $GITHUB_ENV:
+          echo 'user_info<<EOF' >> $GITHUB_ENV
+          echo "$user_info" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      - name: Parsing
+        shell: bash
+        run: |
+          followers="$(printf '%s\n' "$user_info" | jq -rM ."followers")"
+          following="$(printf '%s\n' "$user_info" | jq -rM ."following")"
+          website="$(printf '%s\n' "$user_info" | jq -rM ."blog")"
+          repos="$(printf '%s\n' "$user_info" | jq -rM ."public_repos")"
+          gists="$(printf '%s\n' "$user_info" | jq -rM ."public_gists")"
+          created="$(printf '%s\n' "$user_info" | jq -rM ."created_at")"  ## 2019-05-03T07:07:11Z
+          created="$(date -d "$created" '+%s')"  ## 1556867231
+          now="$(date '+%s')"
+          (( diff="now - created" ))
+
+          source gb
+          duration="$(convert_second "$diff")"  ## 02:07:27:02:05:11
+          IFS=':'
+          read y mo d h mi s <<< "$duration"
+
+          echo "y=$y" >> $GITHUB_ENV
+          echo "mo=$mo" >> $GITHUB_ENV
+          echo "d=$d" >> $GITHUB_ENV
+          echo "h=$h" >> $GITHUB_ENV
+          echo "mi=$mi" >> $GITHUB_ENV
+          echo "s=$s" >> $GITHUB_ENV
+
+      - name: Updating README.md
+        shell: bash
+        run: |
+          : > ./README.md
+          {
+              printf "<div align=\"center\">\n"
+              printf "<img alt=\"membership-message\" src=\"https://img.shields.io/badge/A%%20member%%20for%%20${y}%%20years,%%20${mo}%%20months,%%20${d}%%20days,%%20${h}%%20hours,%%20${mi}%%20minutes%%20and%%20${s}%%20seconds-grey\"> "  ## NOTE JUMP_1 exceptionally used %% here
+              printf "<a href=\"https://github.com/davoudarsalani/davoudarsalani/actions/workflows/update-readme.yml\"><img alt=\"update-readme\" src=\"https://github.com/davoudarsalani/davoudarsalani/actions/workflows/update-readme.yml/badge.svg\"></a>\n"
+              ## activity graph
+              printf "<img alt=\"activity-graph\" src=\"https://activity-graph.herokuapp.com/graph?username=davoudarsalani&custom_title=davoudarsalani%%20activity%%20graph&hide_border=true&theme=react-dark\">"  ## NOTE JUMP_1 exceptionally used %% here
+              ## top langs
+              # printf "<img alt=\"top-langs\" src=\"https://github-readme-stats.vercel.app/api/top-langs/?username=davoudarsalani&layout=compact&show_icons=true&theme=dark\">"
+              ## github stats (options: &hide=stars,commits,prs,issues,contribs&count_private=true)
+              # printf "<img alt=\"github-stats\" src=\"https://github-readme-stats.vercel.app/api?username=davoudarsalani&hide=stars,prs&show_icons=true&theme=dark\">"
+              # printf '\n'
+              printf "</div>\n"
+          } >> ./README.md
+
+      - name: Committing changes
+        uses: davoudarsalani/action--git-push@master
+        with:
+          file_pattern: README.md
+          commit_message: updated by update-readme.yml
