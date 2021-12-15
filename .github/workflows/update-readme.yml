@@ -103,7 +103,6 @@ jobs:
       - name: Inserting activity graph
         shell: bash
         run: |
-          : > README.md
           {
               printf "<div align=\"center\">\n"
               ## activity graph
