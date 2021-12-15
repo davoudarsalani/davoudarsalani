@@ -61,6 +61,7 @@ jobs:
         shell: bash
         run: |
           source gb
+          source gb-calculation
           repos_info="$(curl -s 'https://api.github.com/users/davoudarsalani/repos?type=owner')"
           function ago {
               local diff secs
