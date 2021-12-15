@@ -1,6 +1,7 @@
 name: Update README
 
 on:
+  push:   ############################################### TEMPORARY
   workflow_dispatch:
   schedule:
     - cron: '*/10 * * * *'  ## every 10 minutes
@@ -23,13 +24,13 @@ jobs:
           echo "$user_info" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
-      - name: Parsing
+      - name: Parsing membership info
         shell: bash
         run: |
           followers="$(printf '%s\n' "$user_info" | jq -rM ."followers")"
           following="$(printf '%s\n' "$user_info" | jq -rM ."following")"
           website="$(printf '%s\n' "$user_info" | jq -rM ."blog")"
-          repos="$(printf '%s\n' "$user_info" | jq -rM ."public_repos")"
+          public_repos="$(printf '%s\n' "$user_info" | jq -rM ."public_repos")"
           gists="$(printf '%s\n' "$user_info" | jq -rM ."public_gists")"
           created="$(printf '%s\n' "$user_info" | jq -rM ."created_at")"  ## 2019-05-03T07:07:11Z
           created="$(date -d "$created" '+%s')"  ## 1556867231
@@ -37,25 +38,79 @@ jobs:
           (( diff="now - created" ))
 
           source gb
-          duration="$(convert_second "$diff")"  ## 02:07:27:02:05:11
-          IFS=':'
-          read y mo d h mi s <<< "$duration"
+          duration="$(convert_second "$diff" 'verbose')"  ## 02:07:27:02:05:11
 
-          echo "y=$y" >> $GITHUB_ENV
-          echo "mo=$mo" >> $GITHUB_ENV
-          echo "d=$d" >> $GITHUB_ENV
-          echo "h=$h" >> $GITHUB_ENV
-          echo "mi=$mi" >> $GITHUB_ENV
-          echo "s=$s" >> $GITHUB_ENV
+          echo "now=$now" >> $GITHUB_ENV
+          echo "public_repos=$public_repos" >> $GITHUB_ENV
+          echo "duration=$duration" >> $GITHUB_ENV
 
-      - name: Updating README.md
+      - name: Inserting membership info
         shell: bash
         run: |
-          : > ./README.md
+          : > README.md
+          duration="${duration// /%20}"
           {
               printf "<div align=\"center\">\n"
-              printf "<img alt=\"membership-message\" src=\"https://img.shields.io/badge/A%%20member%%20for%%20${y}%%20years,%%20${mo}%%20months,%%20${d}%%20days,%%20${h}%%20hours,%%20${mi}%%20minutes%%20and%%20${s}%%20seconds-grey\"> "  ## NOTE JUMP_1 exceptionally used %% here
+              printf "<img alt=\"membership-message\" src=\"https://img.shields.io/badge/A%%20member%%20for%%20${duration}-grey\"> "  ## NOTE JUMP_1 exceptionally used %% here
               printf "<a href=\"https://github.com/davoudarsalani/davoudarsalani/actions/workflows/update-readme.yml\"><img alt=\"update-readme\" src=\"https://github.com/davoudarsalani/davoudarsalani/actions/workflows/update-readme.yml/badge.svg\"></a>\n"
+              printf "</div>\n"
+          } >> README.md
+          printf '%s\n' 'vvvvv'
+          cat README.md
+          printf '%s\n' '^^^^'
+
+      - name: Getting repos info
+        shell: bash
+        run: |
+          source gb
+          repos_info="$(curl -s 'https://api.github.com/users/davoudarsalani/repos?type=owner')"
+          function ago {
+              local diff secs
+
+              secs="$(convert_to_second "$1")"
+              printf '%s ago\n' "$(convert_second "(( now - secs ))" 'verbose')"
+          }
+
+      - name: Parsing repos info
+        shell: bash
+        run: |
+          source gb
+          for ((index=0; index<$public_repos; index++)); {
+              forked="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.fork)")"
+              if [ "$forked" == 'false' ]; then
+                  name="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.name)")";
+                  url="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.html_url)")"
+                  description="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.description)")"
+
+                  created_at="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.created_at)")"
+                  created_at="$(ago "$created_at")"
+
+                  updated_at="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.updated_at)")"
+                  updated_at="$(ago "$updated_at")"
+
+                  pushed_at="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.pushed_at)")"
+                  pushed_at="$(ago "$pushed_at")"
+
+                  size="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.size)")"; size="$(convert_byte "$size")"
+                  # _at="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.topics)")"  ## convert to string
+
+                  {
+                  printf '%s [%s](%s)\n' "$index" "$name" "url"
+                  printf '%s\n' "$description"
+                  printf 'created: %s\n' "$created_at"
+                  printf 'upadted: %s\n' "$updated_at"
+                  printf 'pushed: %s\n' "$pushed_at"
+                  printf 'size: %s\n' "$size"
+                  } >> README.md
+              fi
+          }
+
+      - name: Inserting activity graph
+        shell: bash
+        run: |
+          : > README.md
+          {
+              printf "<div align=\"center\">\n"
               ## activity graph
               printf "<img alt=\"activity-graph\" src=\"https://activity-graph.herokuapp.com/graph?username=davoudarsalani&custom_title=davoudarsalani%%20activity%%20graph&hide_border=true&theme=react-dark\">"  ## NOTE JUMP_1 exceptionally used %% here
               ## top langs
@@ -64,10 +119,11 @@ jobs:
               # printf "<img alt=\"github-stats\" src=\"https://github-readme-stats.vercel.app/api?username=davoudarsalani&hide=stars,prs&show_icons=true&theme=dark\">"
               # printf '\n'
               printf "</div>\n"
-          } >> ./README.md
+          } >> README.md
+          rm ./gb*
 
       - name: Committing changes
         uses: davoudarsalani/action--git-push@master
         with:
-          file_pattern: README.md
+          # file_pattern: README.md
           commit_message: updated by update-readme.yml
