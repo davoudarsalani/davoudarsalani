@@ -117,15 +117,22 @@ jobs:
                   (( size*=1024 ))  ## convert to bytes first
                   size="$(convert_byte "$size")"
 
-                  topics="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.topics[])" | xargs)"
+                  topics_str=''
+                  readarray -t topics_arr < <(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.topics[])")
+                  for topic in "${topics_arr[@]}"; {
+                      topics_str+="[${topic}](https://github.com/topics/${topic}), "
+                  }
 
                   {
                     printf '* [%s](%s) `%s` `%s commits`\n' "$name" "$url" "$size" "$commits_count"
                     printf '\t+ __desc:__ %s\n' "$description"
-                    printf '\t+ __topics:__ %s\n' "${topics// /, }"
+                    printf '\t+ __topics:__ %s\n' "${topics_str%,*}"
                     printf '\t+ __created:__ %s\n' "$created_at"
                     printf '\t+ __updated:__ %s\n' "$updated_at"
                   } >> README.md
+
+                  unset topics_str
+                  unset 'topics_arr[@]'
               fi
           }
 
