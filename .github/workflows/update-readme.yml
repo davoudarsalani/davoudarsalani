@@ -100,24 +100,24 @@ jobs:
           source gb-calculation
 
           for ((index=0; index<$public_repos; index++)); {
-              forked="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.fork)")"
+              forked="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.fork)")"
               if [ "$forked" == 'false' ]; then
-                  name="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.name)")";
+                  name="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.name)")";
                   commits_count="$(curl -I -k "https://api.github.com/repos/${{ github.repository_owner }}/${name}/commits?per_page=1" | sed -n '/^[Ll]ink:/ s/.*"next".*page=\([0-9]*\).*"last".*/\1/p')"  ## https://gist.github.com/0penBrain/7be59a48aba778c955d992aa69e524c5
-                  url="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.html_url)")"
-                  description="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.description)")"
+                  url="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.html_url)")"
+                  description="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.description)")"
 
-                  created_at="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.created_at)")"
+                  created_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.created_at)")"
                   created_at="$(ago "$created_at" "$now")"
 
-                  updated_at="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.updated_at)")"
+                  updated_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.updated_at)")"
                   updated_at="$(ago "$updated_at" "$now")"
 
-                  size="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.size)")"
+                  size="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.size)")"
                   (( size*=1024 ))  ## convert to bytes first
                   size="$(convert_byte "$size")"
 
-                  topics="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.topics[])" | xargs)"
+                  topics="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.topics[])" | xargs)"
 
                   {
                     printf '* [%s](%s) `%s` `%s commits`\n' "$name" "$url" "$size" "$commits_count"
