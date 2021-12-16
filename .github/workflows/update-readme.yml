@@ -25,8 +25,8 @@ jobs:
       - name: Parsing membership info
         shell: bash
         run: |
-          wget https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb
-          wget https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb-calculation
+          wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb
+          wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb-calculation
           source gb
 
           # followers="$(printf '%s\n' "$user_info" | jq -rM .'followers')"
@@ -103,8 +103,20 @@ jobs:
               forked="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.fork)")"
               if [ "$forked" == 'false' ]; then
                   name="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.name)")";
-                  commits_count="$(curl -I -k "https://api.github.com/repos/${{ github.repository_owner }}/${name}/commits?per_page=1" | sed -n '/^[Ll]ink:/ s/.*"next".*page=\([0-9]*\).*"last".*/\1/p')"  ## https://gist.github.com/0penBrain/7be59a48aba778c955d992aa69e524c5
                   url="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.html_url)")"
+                  commits_count="$(curl -s -I -k "https://api.github.com/repos/${{ github.repository_owner }}/${name}/commits?per_page=1" | sed -n '/^[Ll]ink:/ s/.*"next".*page=\([0-9]*\).*"last".*/\1/p')"  ## https://gist.github.com/0penBrain/7be59a48aba778c955d992aa69e524c5
+
+                  size="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.size)")"
+                  (( size*=1024 ))  ## convert to bytes first
+                  size="$(convert_byte "$size")"
+
+
+                  topics_str=''
+                  readarray -t topics_arr < <(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.topics[])")
+                  for topic in "${topics_arr[@]}"; {
+                      topics_str+="[${topic}](https://github.com/topics/${topic}), "
+                  }
+
                   description="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.description)")"
 
                   created_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.created_at)")"
@@ -113,20 +125,10 @@ jobs:
                   updated_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.updated_at)")"
                   updated_at="$(ago "$updated_at" "$now")"
 
-                  size="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.size)")"
-                  (( size*=1024 ))  ## convert to bytes first
-                  size="$(convert_byte "$size")"
-
-                  topics_str=''
-                  readarray -t topics_arr < <(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.topics[])")
-                  for topic in "${topics_arr[@]}"; {
-                      topics_str+="[${topic}](https://github.com/topics/${topic}), "
-                  }
-
                   {
                     printf '* [%s](%s) `%s` `%s commits`\n' "$name" "$url" "$size" "$commits_count"
-                    printf '\t+ __desc:__ %s\n' "$description"
                     printf '\t+ __topics:__ %s\n' "${topics_str%,*}"
+                    printf '\t+ __desc:__ %s\n' "$description"
                     printf '\t+ __created:__ %s\n' "$created_at"
                     printf '\t+ __updated:__ %s\n' "$updated_at"
                   } >> README.md
