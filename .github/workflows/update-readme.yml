@@ -116,8 +116,37 @@ jobs:
                   for topic in "${topics_arr[@]}"; {
                       topics_str+="[${topic}](https://github.com/topics/${topic}), "
                   }
+                  topics_str="${topics_str:-none}"
+
+                  ## top langs START:
+                  sleep 4
+                  top_langs_info="$(curl -s https://api.github.com/repos/${{ github.repository_owner }}/${name}/languages)"
+                  non_zero_str=''
+                  declare -A top_langs_arr
+                  declare -i bytes_total=0 idx=1
+
+                  ## turn json into associative array (https://stackoverflow.com/questions/58999047/how-to-construct-associative-bash-array-from-json-hash)
+                  while IFS= read -r -d '' key && IFS= read -r -d '' value; do
+                      ((idx > 5)) && break
+                      top_langs_arr[${key}]="$value"
+                      ((idx++))
+                  done < <(jq -j 'to_entries[] | (.key, "\u0000", .value, "\u0000")' <<< "$top_langs_info")
+
+                  ## get bytes_total
+                  bytes_total=$(IFS=+; echo "$((${top_langs_arr[*]}))")  ## NOTE do NOT replace * with @
+
+                  ## TODO make top_langs_arr sorted (by second column)
+                  for k in "${!top_langs_arr[@]}"; {
+                      v="${top_langs_arr[${k}]}"
+                      percent="$(float_pad "${v}*100/${bytes_total}")"
+                      not_zero="$(compare_floats "$percent" ">" 0)"
+                      [ "$not_zero" == 'true' ] && non_zero_str+="[${k,,}](https://github.com/topics/${k// /%%20}) ${percent%.00}%, "  ## NOTE JUMP_1 exceptionally used %% here
+                  }
+                  non_zero_str="${non_zero_str:-none}"
+                  ## top langs END:
 
                   description="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.description)")"
+                  [ "$description" == 'null' ] && description='none'
 
                   created_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.created_at)")"
                   created_at="$(ago "$created_at" "$now")"
@@ -128,6 +157,7 @@ jobs:
                   {
                     printf '* [%s](%s) `%s` `%s commits`\n' "$name" "$url" "$size" "$commits_count"
                     printf '\t+ __topics:__ %s\n' "${topics_str%,*}"
+                    printf '\t+ __top langs__: %s\n' "${non_zero_str%,*}"
                     printf '\t+ __desc:__ %s\n' "$description"
                     printf '\t+ __created:__ %s\n' "$created_at"
                     printf '\t+ __updated:__ %s\n' "$updated_at"
@@ -135,6 +165,9 @@ jobs:
 
                   unset topics_str
                   unset 'topics_arr[@]'
+
+                  unset top_langs_info bytes_total idx key value non_zero_str k v percent not_zero
+                  unset 'top_langs_arr[@]'
               fi
           }
 
