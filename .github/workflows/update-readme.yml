@@ -12,59 +12,135 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Getting user info
+      - name: Getting membership info
         shell: bash
         run: |
-          user_info="$(curl -s https://api.github.com/users/davoudarsalani)"
-          wget https://raw.githubusercontent.com/davoudarsalani/scripts/master/gb
+          user_info="$(curl -s https://api.github.com/users/${{ github.repository_owner }})"
 
-          ## save a multi-line variable into $GITHUB_ENV:
+          ## JUMP_2 save a multi-line variable into $GITHUB_ENV:
           echo 'user_info<<EOF' >> $GITHUB_ENV
           echo "$user_info" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
-      - name: Parsing
+      - name: Parsing membership info
         shell: bash
         run: |
-          followers="$(printf '%s\n' "$user_info" | jq -rM ."followers")"
-          following="$(printf '%s\n' "$user_info" | jq -rM ."following")"
-          website="$(printf '%s\n' "$user_info" | jq -rM ."blog")"
-          repos="$(printf '%s\n' "$user_info" | jq -rM ."public_repos")"
-          gists="$(printf '%s\n' "$user_info" | jq -rM ."public_gists")"
-          created="$(printf '%s\n' "$user_info" | jq -rM ."created_at")"  ## 2019-05-03T07:07:11Z
-          created="$(date -d "$created" '+%s')"  ## 1556867231
-          now="$(date '+%s')"
-          (( diff="now - created" ))
-
+          wget https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb
+          wget https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb-calculation
           source gb
-          duration="$(convert_second "$diff")"  ## 02:07:27:02:05:11
-          IFS=':'
-          read y mo d h mi s <<< "$duration"
 
-          echo "y=$y" >> $GITHUB_ENV
-          echo "mo=$mo" >> $GITHUB_ENV
-          echo "d=$d" >> $GITHUB_ENV
-          echo "h=$h" >> $GITHUB_ENV
-          echo "mi=$mi" >> $GITHUB_ENV
-          echo "s=$s" >> $GITHUB_ENV
+          # followers="$(printf '%s\n' "$user_info" | jq -rM .'followers')"
+          # following="$(printf '%s\n' "$user_info" | jq -rM .'following')"
+          # website="$(printf '%s\n' "$user_info" | jq -rM .'blog')"
+          # gists="$(printf '%s\n' "$user_info" | jq -rM .'public_gists')"
+          public_repos="$(printf '%s\n' "$user_info" | jq -rM .'public_repos')"  ## 10
+          created="$(printf '%s\n' "$user_info" | jq -rM .'created_at')"  ## 2019-05-03T07:07:11Z
+          # created="$(convert_to_second "$created")"  ## 1556867231
+          now="$(date '+%s')"
 
-      - name: Updating README.md
+          membership_start="$(ago "$created" "$now")"
+
+          echo "now=$now" >> $GITHUB_ENV
+          echo "public_repos=$public_repos" >> $GITHUB_ENV
+          echo "membership_start=$membership_start" >> $GITHUB_ENV
+
+      - name: Inserting membership info
         shell: bash
         run: |
-          : > ./README.md
+          : > README.md
           {
               printf "<div align=\"center\">\n"
-              printf "<img alt=\"membership-message\" src=\"https://img.shields.io/badge/A%%20member%%20for%%20${y}%%20years,%%20${mo}%%20months,%%20${d}%%20days,%%20${h}%%20hours,%%20${mi}%%20minutes%%20and%%20${s}%%20seconds-grey\"> "  ## NOTE JUMP_1 exceptionally used %% here
-              printf "<a href=\"https://github.com/davoudarsalani/davoudarsalani/actions/workflows/update-readme.yml\"><img alt=\"update-readme\" src=\"https://github.com/davoudarsalani/davoudarsalani/actions/workflows/update-readme.yml/badge.svg\"></a>\n"
-              ## activity graph
-              printf "<img alt=\"activity-graph\" src=\"https://activity-graph.herokuapp.com/graph?username=davoudarsalani&custom_title=davoudarsalani%%20activity%%20graph&hide_border=true&theme=react-dark\">"  ## NOTE JUMP_1 exceptionally used %% here
+
+              ## membership badge (currently disabled. The info is show as custom_title in activity graph in JUMP_3)
+              # printf "<img alt=\"membership-message\" src=\"https://img.shields.io/badge/Joined%%20${membership_start// /%%20}-grey\"> "  ## NOTE JUMP_1 exceptionally used %% here
+
+              ## status badge
+              printf "<a href=\"https://github.com/${{ github.repository }}/actions/workflows/update-readme.yml\">\n"
+              printf "<img alt=\"update-readme\" src=\"https://github.com/${{ github.repository }}/actions/workflows/update-readme.yml/badge.svg\">\n"
+              printf "</a>\n"
+
+              printf "</div>\n"
+          } >> README.md
+
+      - name: Inserting activity graph, etc.
+        shell: bash
+        run: |
+          {
+              printf "<div align=\"center\">\n"
+
+              ## JUMP_3
+              ## activity graph (options: &custom_title=${{ github.repository_owner }}%%20activity%%20graph)
+              printf "<img alt=\"activity-graph\" src=\"https://activity-graph.herokuapp.com/graph?username=${{ github.repository_owner }}&custom_title=Joined%%20${membership_start// /%%20}&hide_border=true&theme=react-dark\">"  ## NOTE JUMP_1 exceptionally used %% here
+
               ## top langs
-              # printf "<img alt=\"top-langs\" src=\"https://github-readme-stats.vercel.app/api/top-langs/?username=davoudarsalani&layout=compact&show_icons=true&theme=dark\">"
+              # printf "<img alt=\"top-langs\" src=\"https://github-readme-stats.vercel.app/api/top-langs/?username=${{ github.repository_owner }}&layout=compact&show_icons=true&theme=dark\">"
+
               ## github stats (options: &hide=stars,commits,prs,issues,contribs&count_private=true)
-              # printf "<img alt=\"github-stats\" src=\"https://github-readme-stats.vercel.app/api?username=davoudarsalani&hide=stars,prs&show_icons=true&theme=dark\">"
+              # printf "<img alt=\"github-stats\" src=\"https://github-readme-stats.vercel.app/api?username=${{ github.repository_owner }}&hide=stars,prs&show_icons=true&theme=dark\">"
+
               # printf '\n'
               printf "</div>\n"
-          } >> ./README.md
+              printf '<br>\n\n'
+          } >> README.md
+
+      - name: Getting repos info
+        shell: bash
+        run: |
+          repos_info="$(curl -s 'https://api.github.com/users/${{ github.repository_owner }}/repos?type=owner')"
+
+          ## JUMP_2 save a multi-line variable into $GITHUB_ENV:
+          echo 'repos_info<<EOF' >> $GITHUB_ENV
+          echo "$repos_info" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      - name: Parsing/inserting repos info
+        shell: bash
+        run: |
+          source gb
+          source gb-calculation
+
+          for ((index=0; index<$public_repos; index++)); {
+              forked="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.fork)")"
+              if [ "$forked" == 'false' ]; then
+                  name="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.name)")";
+                  commits_count="$(curl -I -k "https://api.github.com/repos/${{ github.repository_owner }}/${name}/commits?per_page=1" | sed -n '/^[Ll]ink:/ s/.*"next".*page=\([0-9]*\).*"last".*/\1/p')"  ## https://gist.github.com/0penBrain/7be59a48aba778c955d992aa69e524c5
+                  url="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.html_url)")"
+                  description="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.description)")"
+
+                  created_at="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.created_at)")"
+                  created_at="$(ago "$created_at" "$now")"
+
+                  updated_at="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.updated_at)")"
+                  updated_at="$(ago "$updated_at" "$now")"
+
+                  size="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.size)")"
+                  (( size*=1024 ))  ## convert to bytes first
+                  size="$(convert_byte "$size")"
+
+                  topics="$(printf '%s\n' "$repos_info" | jq -rM ."[$index]|(.topics[])" | xargs)"
+
+                  {
+                    printf '* [%s](%s) `%s` `%s commits`\n' "$name" "$url" "$size" "$commits_count"
+                    printf '\t+ __desc:__ %s\n' "$description"
+                    printf '\t+ __topics:__ %s\n' "${topics// /, }"
+                    printf '\t+ __created:__ %s\n' "$created_at"
+                    printf '\t+ __updated:__ %s\n' "$updated_at"
+                  } >> README.md
+              fi
+          }
+
+      - name: Inserting top badge
+        shell: bash
+        run: |
+          {
+              printf "<div align=\"center\">\n"
+
+              printf "<a href='https://github.com/${{ github.repository }}#readme'>\n"
+              printf "<img alt='top' src='https://img.shields.io/badge/TOP-grey'>\n"
+              printf '</a>\n'
+
+              printf "</div>\n"
+          } >> README.md
 
       - name: Committing changes
         uses: davoudarsalani/action--git-push@master
