@@ -99,20 +99,20 @@ jobs:
           source gb
           source gb-calculation
 
+          topics_str=''
           for ((index=0; index<$public_repos; index++)); {
               forked="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.fork)")"
               if [ "$forked" == 'false' ]; then
                   name="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.name)")";
                   url="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.html_url)")"
-                  commits_count="$(curl -s -I -k "https://api.github.com/repos/${{ github.repository_owner }}/${name}/commits?per_page=1" | sed -n '/^[Ll]ink:/ s/.*"next".*page=\([0-9]*\).*"last".*/\1/p')"  ## https://gist.github.com/0penBrain/7be59a48aba778c955d992aa69e524c5
-
                   size="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.size)")"
                   (( size*=1024 ))  ## convert to bytes first
                   size="$(convert_byte "$size")"
 
+                  ## https://gist.github.com/0penBrain/7be59a48aba778c955d992aa69e524c5
+                  commits_count="$(curl -s -I -k "https://api.github.com/repos/${{ github.repository_owner }}/${name}/commits?per_page=1" | sed -n '/^[Ll]ink:/ s/.*"next".*page=\([0-9]*\).*"last".*/\1/p')"
 
-                  topics_str=''
-                  readarray -t topics_arr < <(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.topics[])")
+                  readarray -t topics_arr < <(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.topics[])" | sort)
                   for topic in "${topics_arr[@]}"; {
                       topics_str+="[${topic}](https://github.com/topics/${topic}), "
                   }
