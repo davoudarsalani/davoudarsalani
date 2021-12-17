@@ -114,6 +114,8 @@ jobs:
 
                   readarray -t topics_arr < <(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.topics[])" | sort)
                   for topic in "${topics_arr[@]}"; {
+                      topic="${topic// /%%20}"  ## NOTE JUMP_1 exceptionally used %% here
+                      topic="${topic,,}"
                       topics_str+="[${topic}](https://github.com/topics/${topic}), "
                   }
                   topics_str="${topics_str:-none}"
@@ -136,11 +138,15 @@ jobs:
                   bytes_total=$(IFS=+; echo "$((${top_langs_arr[*]}))")  ## NOTE do NOT replace * with @
 
                   ## TODO make top_langs_arr sorted (by second column)
-                  for k in "${!top_langs_arr[@]}"; {
-                      v="${top_langs_arr[${k}]}"
-                      percent="$(float_pad "${v}*100/${bytes_total}")"
-                      not_zero="$(compare_floats "$percent" ">" 0)"
-                      [ "$not_zero" == 'true' ] && non_zero_str+="[${k,,}](https://github.com/topics/${k// /%%20}) ${percent%.00}%, "  ## NOTE JUMP_1 exceptionally used %% here
+                  for top_langs_key in "${!top_langs_arr[@]}"; {
+                      top_langs_value="${top_langs_arr[${top_langs_key}]}"
+                      top_langs_percent="$(float_pad "${top_langs_value}*100/${bytes_total}" 1 2)"
+                      is_not_zero="$(compare_floats "$top_langs_percent" ">" 0)"
+                      [ "$is_not_zero" == 'true' ] && {
+                        top_langs_key="${top_langs_key// /%%20}"  ## NOTE JUMP_1 exceptionally used %% here
+                        top_langs_key="${top_langs_key,,}"
+                        non_zero_str+="[${top_langs_key}](https://github.com/topics/${top_langs_key}) ${top_langs_percent%.00}%, "
+                      }
                   }
                   non_zero_str="${non_zero_str:-none}"
                   ## top langs END:
@@ -166,7 +172,7 @@ jobs:
                   unset topics_str
                   unset 'topics_arr[@]'
 
-                  unset top_langs_info bytes_total idx key value non_zero_str k v percent not_zero
+                  unset top_langs_info bytes_total idx key value non_zero_str top_langs_key top_langs_value top_langs_percent is_not_zero
                   unset 'top_langs_arr[@]'
               fi
           }
