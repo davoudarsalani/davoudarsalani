@@ -1,6 +1,6 @@
 name: Notify
 
-on: [pull_request, workflow_dispatch]  ## TEMPORARY   add push
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   notify:
