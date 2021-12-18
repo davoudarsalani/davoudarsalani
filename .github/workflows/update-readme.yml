@@ -113,6 +113,8 @@ jobs:
               (( size*=1024 ))  ## convert to bytes first
               size="$(convert_byte "$size")"
 
+              zip_url="https://api.github.com/repos/${{ github.repository_owner }}/${name}/zipball"
+
               ## https://gist.github.com/0penBrain/7be59a48aba778c955d992aa69e524c5
               commits_count="$(curl -s -I -k "https://api.github.com/repos/${{ github.repository_owner }}/${name}/commits?per_page=1" | \
                                sed -n '/^[Ll]ink:/ s/.*"next".*page=\([0-9]*\).*"last".*/\1/p')"
@@ -167,7 +169,7 @@ jobs:
               ## top langs END
 
               {
-                printf '* [%s](%s) `%s` `%s commits`\n' "$name" "$url" "$size" "$commits_count"
+                printf '* [%s](%s) `%s` `%s commits` [](%s)\n' "$name" "$url" "$size" "$commits_count" "$zip_url"
                 [ "$topics_str" ] && printf '\t+ __topics:__ %s\n' "${topics_str%,*}"
                 [ "$description" == 'null' ] || printf '\t+ __desc:__ %s\n' "$description"
                 printf '\t+ __created:__ %s\n' "$created_at"
