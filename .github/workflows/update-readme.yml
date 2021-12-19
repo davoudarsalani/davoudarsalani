@@ -100,15 +100,25 @@ jobs:
           source gb-calculation
 
           for ((index=0; index<"$public_repos"; index++)); {
+            name="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.name)")"
+            url="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.html_url)")"
             forked="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.fork)")"
-            if [ "$forked" == 'false' ]; then
+            if [ "$forked" == 'true' ]; then
+              forked_repo_info="$(curl -s https://api.github.com/repos/${{ github.repository_owner }}/"$name")"
+
+              parent_url="$(printf '%s\n' "$forked_repo_info" | jq -rM .'parent|(.html_url)')"  ## https://api.github.com/repos/stefanzweifel/git-auto-commit-action
+              parent_name="$(printf '%s\n' "$forked_repo_info" | jq -rM .'parent|(.name)')"  ## git-auto-commit-action
+              parent_owner="$(printf '%s\n' "$forked_repo_info" | jq -rM .'parent|(.login)')"  ## stefanzweifel
+              {
+                printf '* [%s](%s)\n' "$name" "$url"
+                printf '\t+ __fork of:__ [%s](%s) by %s\n' "$parent_name" "$parent_url" "$parent_owner"
+              } >> README.md
+            elif [ "$forked" == 'false' ]; then
               topics_str=''
               lang_percent_bar_arr=()
               declare -A top_langs_arr
               declare -i bytes_total
 
-              name="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.name)")"
-              url="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.html_url)")"
               size="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.size)")"
               (( size == 0 )) && size=1
               (( size*=1024 ))  ## convert to bytes first
