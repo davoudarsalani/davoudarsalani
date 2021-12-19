@@ -107,9 +107,10 @@ jobs:
               declare -A top_langs_arr
               declare -i bytes_total
 
-              name="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.name)")";
+              name="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.name)")"
               url="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.html_url)")"
               size="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.size)")"
+              (( size == 0 )) && size=1
               (( size*=1024 ))  ## convert to bytes first
               size="$(convert_byte "$size")"
 
