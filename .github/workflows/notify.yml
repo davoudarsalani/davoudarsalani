@@ -12,11 +12,5 @@ jobs:
       - name: Notifying
         uses: davoudarsalani/action-notify@master
         with:
-          telegram_message: |
-            ${{ github.event_name }}
-            ${{ github.repository_owner }}
-            ${{ github.repository }}
-            Commit message: ${{ github.event.commits[0].message }}
-            https://github.com/${{ github.repository }}/commit/${{ github.sha }}
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
