@@ -27,7 +27,7 @@ jobs:
         run: |
           wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb
           wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb-calculation
-          source gb
+          source ./gb
 
           # followers="$(printf '%s\n' "$user_info" | jq -rM .'followers')"
           # following="$(printf '%s\n' "$user_info" | jq -rM .'following')"
@@ -96,8 +96,8 @@ jobs:
       - name: Parsing/inserting repos info
         shell: bash
         run: |
-          source gb
-          source gb-calculation
+          source ./gb
+          source ./gb-calculation
 
           for ((index=0; index<"$public_repos"; index++)); {
             name="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.name)")"
