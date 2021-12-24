@@ -11,6 +11,6 @@ jobs:
 
       - name: Notifying
         uses: davoudarsalani/action-notify@master
-        secrets:
+        with:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
