@@ -38,7 +38,7 @@ jobs:
           # created="$(convert_to_second "$created")"  ## 1556867231
           now="$(date '+%s')"
 
-          membership_start="$(ago "$created" "$now")"
+          membership_start="$(relative_date "$created" "$now")"
 
           echo "now=$now" >> $GITHUB_ENV
           echo "public_repos=$public_repos" >> $GITHUB_ENV
@@ -139,10 +139,10 @@ jobs:
               description="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.description)")"
 
               created_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.created_at)")"
-              created_at="$(ago "$created_at" "$now")"
+              created_at="$(relative_date "$created_at" "$now")"
 
               updated_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.updated_at)")"
-              updated_at="$(ago "$updated_at" "$now")"
+              updated_at="$(relative_date "$updated_at" "$now")"
 
               ## top langs START
               sleep 3
