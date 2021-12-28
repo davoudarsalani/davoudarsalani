@@ -210,4 +210,3 @@ jobs:
         uses: davoudarsalani/action--git-push@master
         with:
           file_pattern: README.md
-          commit_message: updated by update-readme.yml
