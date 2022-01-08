@@ -171,7 +171,7 @@ jobs:
                   top_langs_percent_qrtr="${top_langs_percent_qrtr%.*}"
                   (( top_langs_percent_qrtr == 0 )) && top_langs_percent_qrtr=1  ## to make sure it has at least one block
                   short="$((20 - "$top_langs_percent_qrtr" ))"
-                  full="$(printf "%${top_langs_percent_qrtr}s" | sed 's/ /█/g')" # █ ░
+                  full="$(printf "%${top_langs_percent_qrtr}s" | sed 's/ /█/g')"  ## █ ░
                   empty="$(printf "%${short}s" | sed 's/ /░/g')"
                   perc_lang="$(printf ' %s [%s](https://github.com/topics/%s)\n' "${top_langs_percent%.00}%" "$top_langs_key" "${top_langs_key// /%20}")"
                   lang_percent_bar_arr+=( "\`${full}${empty}\` ${perc_lang}")
@@ -206,7 +206,7 @@ jobs:
             printf "</div>\n"
           } >> README.md
 
-      - name: Committing changes
-        uses: davoudarsalani/action--git-push@master
+      - name: Pushing changes
+        uses: davoudarsalani/action-push@master
         with:
-          file_pattern: README.md
+          pattern: 'README.md'
