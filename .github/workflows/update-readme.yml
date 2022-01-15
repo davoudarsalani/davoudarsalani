@@ -210,3 +210,4 @@ jobs:
         uses: davoudarsalani/action-push@master
         with:
           pattern: 'README.md'
+          user_email: '${{ secrets.EMAIL1 }}'
