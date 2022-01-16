@@ -141,8 +141,11 @@ jobs:
               created_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.created_at)")"
               created_at="$(relative_date "$created_at" "$now")"
 
-              updated_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.updated_at)")"
-              updated_at="$(relative_date "$updated_at" "$now")"
+              # updated_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.updated_at)")"
+              # updated_at="$(relative_date "$updated_at" "$now")"
+
+              pushed_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.pushed_at)")"
+              pushed_at="$(relative_date "$pushed_at" "$now")"
 
               ## top langs START
               sleep 3
@@ -184,7 +187,7 @@ jobs:
                 [ "$topics_str" ] && printf '\t+ __topics:__ %s\n' "${topics_str%,*}"
                 [ "$description" == 'null' ] || printf '\t+ __desc:__ %s\n' "$description"
                 printf '\t+ __created:__ %s\n' "$created_at"
-                printf '\t+ __updated:__ %s\n' "$updated_at"
+                printf '\t+ __last pushed:__ %s\n' "$pushed_at"
                 [ "$lang_percent_bar_arr" ] && printf '\t+ %s\n' "${lang_percent_bar_arr[@]}"
               } >> README.md
 
