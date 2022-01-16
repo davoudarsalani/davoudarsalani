@@ -209,4 +209,4 @@ jobs:
       - name: Pushing changes
         uses: davoudarsalani/action-push@master
         with:
-          pattern: 'README.md'
+          file_pattern: 'README.md'
