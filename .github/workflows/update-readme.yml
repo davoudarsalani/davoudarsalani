@@ -70,7 +70,7 @@ jobs:
 
               ## JUMP_3
               ## activity graph (options: &custom_title=${{ github.repository_owner }}%%20activity%%20graph)
-              printf "<img alt=\"activity-graph\" src=\"https://activity-graph.herokuapp.com/graph?username=${{ github.repository_owner }}&custom_title=Joined%%20${membership_start// /%%20}&hide_border=true&bg_color=000000&color=1793D1&line=ffffff\">"    ## NOTE JUMP_1 exceptionally used %% here
+              printf "<img alt=\"activity-graph\" src=\"https://activity-graph.herokuapp.com/graph?username=${{ github.repository_owner }}&custom_title=Joined%%20${membership_start// /%%20}&hide_border=true&bg_color=00000000&color=1793D1&line=ffffff\">"    ## NOTE JUMP_1 exceptionally used %% here
 
               ## top langs
               # printf "<img alt=\"top-langs\" src=\"https://github-readme-stats.vercel.app/api/top-langs/?username=${{ github.repository_owner }}&layout=compact&show_icons=true&theme=dark\">"
