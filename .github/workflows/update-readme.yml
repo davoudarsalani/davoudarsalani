@@ -51,7 +51,7 @@ jobs:
           {
               printf "<div align=\"center\">\n"
 
-              ## membership badge (currently disabled. The info is show as custom_title in activity graph in JUMP_3)
+              ## membership badge (currently disabled. The info is shown as custom_title in activity graph in JUMP_3)
               # printf "<img alt=\"membership-message\" src=\"https://img.shields.io/badge/Joined%%20${membership_start// /%%20}-grey\"> "  ## NOTE JUMP_1 exceptionally used %% here
 
               ## status badge
@@ -70,6 +70,7 @@ jobs:
 
               ## JUMP_3
               ## activity graph (options: &custom_title=${{ github.repository_owner }}%%20activity%%20graph)
+              ## (github repo: https://github.com/Ashutosh00710/github-readme-activity-graph)
               printf "<img alt=\"activity-graph\" src=\"https://activity-graph.herokuapp.com/graph?username=${{ github.repository_owner }}&custom_title=Joined%%20${membership_start// /%%20}&hide_border=true&bg_color=00000000&color=1793D1&line=ffffff\">"    ## NOTE JUMP_1 exceptionally used %% here
 
               ## top langs

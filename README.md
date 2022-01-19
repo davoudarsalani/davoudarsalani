@@ -4,7 +4,7 @@
 </a>
 </div>
 <div align="center">
-<img alt="activity-graph" src="https://activity-graph.herokuapp.com/graph?username=davoudarsalani&custom_title=Joined%2002%20years,%2009%20months,%2002%20days,%2008%20hours,%2007%20minutes%20and%2019%20seconds%20ago&hide_border=true&bg_color=00000000&color=1793D1&line=ffffff"></div>
+<img alt="activity-graph" src="https://activity-graph.herokuapp.com/graph?username=davoudarsalani&custom_title=Joined%2002%20years,%2009%20months,%2002%20days,%2008%20hours,%2007%20minutes%20and%2019%20seconds%20ago&hide_border=true&bg_color=00000000&point=00000000&color=1793D1&line=ffffff"></div>
 <br>
 
 * [action-jdate](https://github.com/davoudarsalani/action-jdate) `56.00KB` `58 commits` [](https://api.github.com/repos/davoudarsalani/action-jdate/zipball)
