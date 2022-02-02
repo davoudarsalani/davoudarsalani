@@ -36,9 +36,8 @@ jobs:
           public_repos="$(printf '%s\n' "$user_info" | jq -rM .'public_repos')"  ## 10
           created="$(printf '%s\n' "$user_info" | jq -rM .'created_at')"  ## 2019-05-03T07:07:11Z
           # created="$(convert_to_second "$created")"  ## 1556867231
-          now="$(date '+%s')"
 
-          membership_start="$(relative_date "$created" "$now")"
+          membership_start="$(relative_date "$created")"
 
           echo "now=$now" >> $GITHUB_ENV
           echo "public_repos=$public_repos" >> $GITHUB_ENV
