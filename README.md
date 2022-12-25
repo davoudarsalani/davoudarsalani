@@ -4,7 +4,7 @@
 </a>
 </div>
 <div align="center">
-<img alt="activity-graph" src="https://activity-graph.herokuapp.com/graph?username=davoudarsalani&custom_title=Joined%2053%20years,%2009%20months,%2001%20day,%2006%20hours,%2017%20minutes%20and%2052%20seconds%20ago&hide_border=true&bg_color=00000000&point=00000000&color=1793D1&line=00000000&area=true&area_color=1793d1"></div>
+<img alt="activity-graph" src="https://activity-graph.herokuapp.com/graph?username=davoudarsalani&custom_title=Joined%2053%20years,%2009%20months,%2001%20day,%2007%20hours,%2012%20minutes%20and%2028%20seconds%20ago&hide_border=true&bg_color=00000000&point=00000000&color=1793D1&line=00000000&area=true&area_color=1793d1"></div>
 <br>
 
 <div align="center">
