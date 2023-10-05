@@ -3,7 +3,7 @@ name: Update README
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 */12 * * *'  ## at minute 0 past every 12th hour (= every 12 hours)
+    - cron: '0 0,12 * * *'  ## At minute 0 past hour 0 and 12
 
 jobs:
   update-readme:
