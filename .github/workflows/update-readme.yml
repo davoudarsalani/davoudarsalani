@@ -25,15 +25,15 @@ jobs:
       - name: Parsing membership info
         shell: bash
         run: |
-          wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb
-          wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb-calculation
+          wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb.sh
+          wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb-calculation.sh
 
           ## NOTE insert \nbyte_size=1024 after line one (i.e. below shebang).
           ##      this is necessary because byte_size is an environment variable
           ##      which is not present in GitHub so we have to manually define it in the script here
-          sed -i '1a\\nbyte_size=1024' ./gb-calculation && sleep 1
+          sed -i '1a\\nbyte_size=1024' ./gb-calculation.sh && sleep 1
 
-          source ./gb
+          source ./gb.sh
 
           # followers="$(printf '%s\n' "$user_info" | jq -rM .'followers')"
           # following="$(printf '%s\n' "$user_info" | jq -rM .'following')"
@@ -103,8 +103,8 @@ jobs:
       - name: Parsing/inserting repos info
         shell: bash
         run: |
-          source ./gb
-          source ./gb-calculation
+          source ./gb.sh
+          source ./gb-calculation.sh
 
           for ((index=0; index<"$public_repos"; index++)); {
             name="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.name)")"
