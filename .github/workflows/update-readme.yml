@@ -45,7 +45,6 @@ jobs:
 
           membership_start="$(relative_date "$created")"
 
-          echo "now=$now" >> $GITHUB_ENV
           echo "public_repos=$public_repos" >> $GITHUB_ENV
           echo "membership_start=$membership_start" >> $GITHUB_ENV
 
@@ -146,13 +145,13 @@ jobs:
               description="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.description)")"
 
               created_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.created_at)")"
-              created_at="$(relative_date "$created_at" "$now")"
+              created_at="$(relative_date "$created_at")"
 
               # updated_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.updated_at)")"
-              # updated_at="$(relative_date "$updated_at" "$now")"
+              # updated_at="$(relative_date "$updated_at")"
 
               pushed_at="$(printf '%s\n' "$repos_info" | jq -rM ."[${index}]|(.pushed_at)")"
-              pushed_at="$(relative_date "$pushed_at" "$now")"
+              pushed_at="$(relative_date "$pushed_at")"
 
               ## top langs START
               sleep 3
