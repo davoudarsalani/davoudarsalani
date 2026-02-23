@@ -25,8 +25,8 @@ jobs:
       - name: Parsing membership info
         shell: bash
         run: |
-          wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb.sh
-          wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/gb-calculation.sh
+          wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/utils.sh
+          wget -q https://raw.githubusercontent.com/${{ github.repository_owner }}/scripts/master/utils-calculation.sh
 
           ## NOTE insert \nbyte_size=1024 after line one (i.e. below shebang).
           ##      this is necessary because byte_size is an environment variable
