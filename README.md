@@ -25,35 +25,35 @@
 	+ __topics:__ [arch](https://github.com/topics/arch), [awesomewm](https://github.com/topics/awesomewm), [configuration](https://github.com/topics/configuration), [dotfile](https://github.com/topics/dotfile), [linux](https://github.com/topics/linux)
 	+ __desc:__ Dotfiles for Arch Linux + AwesomeWM
 	+ __created:__ 4 years, 9 months and 23 days ago
-	+ __last pushed:__ 1 year, 4 months and 17 days ago
+	+ __last pushed:__ 1 year, 4 months and 18 days ago
 	+ `███████░░░░░░░░░░░░░`  39.42% [shell](https://github.com/topics/shell)
 	+ `█░░░░░░░░░░░░░░░░░░░`  1.92% [dockerfile](https://github.com/topics/dockerfile)
 	+ `███████████░░░░░░░░░`  58.66% [lua](https://github.com/topics/lua)
 * [datasets](https://github.com/davoudarsalani/datasets) `1.96G` `46666 commits` [](https://api.github.com/repos/davoudarsalani/datasets/zipball)
 	+ __topics:__ [dataset](https://github.com/topics/dataset), [json](https://github.com/topics/json)
 	+ __desc:__ json datasets
-	+ __created:__ 4 years, 6 months and 26 days ago
-	+ __last pushed:__ 3 months, 9 days and 11 hrs ago
+	+ __created:__ 4 years, 6 months and 27 days ago
+	+ __last pushed:__ 3 months, 9 days and 23 hrs ago
 	+ `███████░░░░░░░░░░░░░`  39.42% [shell](https://github.com/topics/shell)
 	+ `█░░░░░░░░░░░░░░░░░░░`  1.92% [dockerfile](https://github.com/topics/dockerfile)
 	+ `███████████░░░░░░░░░`  58.66% [lua](https://github.com/topics/lua)
-* [davoudarsalani](https://github.com/davoudarsalani/davoudarsalani) `15.16M` `24393 commits` [](https://api.github.com/repos/davoudarsalani/davoudarsalani/zipball)
+* [davoudarsalani](https://github.com/davoudarsalani/davoudarsalani) `15.16M` `24394 commits` [](https://api.github.com/repos/davoudarsalani/davoudarsalani/zipball)
 	+ __created:__ 4 years, 9 months and 6 days ago
-	+ __last pushed:__ 14 hrs, 22 mins and 8 secs ago
+	+ __last pushed:__ 11 hrs, 52 mins and 22 secs ago
 	+ `███████░░░░░░░░░░░░░`  39.42% [shell](https://github.com/topics/shell)
 	+ `█░░░░░░░░░░░░░░░░░░░`  1.92% [dockerfile](https://github.com/topics/dockerfile)
 	+ `███████████░░░░░░░░░`  58.66% [lua](https://github.com/topics/lua)
 * [dockerfiles](https://github.com/davoudarsalani/dockerfiles) `182K` `18 commits` [](https://api.github.com/repos/davoudarsalani/dockerfiles/zipball)
 	+ __created:__ 4 years, 8 months and 8 days ago
-	+ __last pushed:__ 4 years, 6 months and 25 days ago
+	+ __last pushed:__ 4 years, 6 months and 26 days ago
 	+ `███████░░░░░░░░░░░░░`  38.25% [shell](https://github.com/topics/shell)
 	+ `█░░░░░░░░░░░░░░░░░░░`  4.83% [dockerfile](https://github.com/topics/dockerfile)
 	+ `███████████░░░░░░░░░`  56.92% [lua](https://github.com/topics/lua)
 * [scripts](https://github.com/davoudarsalani/scripts) `1.32M` `154 commits` [](https://api.github.com/repos/davoudarsalani/scripts/zipball)
 	+ __topics:__ [arch](https://github.com/topics/arch), [automation](https://github.com/topics/automation), [bash](https://github.com/topics/bash), [linux](https://github.com/topics/linux), [python](https://github.com/topics/python), [script](https://github.com/topics/script), [sh](https://github.com/topics/sh), [shell](https://github.com/topics/shell)
 	+ __desc:__ Bash/python scripts for everyday use on Arch Linux
-	+ __created:__ 5 years, 2 months and 15 days ago
-	+ __last pushed:__ 6 months, 5 days and 8 hrs ago
+	+ __created:__ 5 years, 2 months and 16 days ago
+	+ __last pushed:__ 6 months, 5 days and 20 hrs ago
 	+ `█████░░░░░░░░░░░░░░░`  25.74% [python](https://github.com/topics/python)
 	+ `█████████░░░░░░░░░░░`  47.75% [shell](https://github.com/topics/shell)
 	+ `█░░░░░░░░░░░░░░░░░░░`  2.07% [dockerfile](https://github.com/topics/dockerfile)
